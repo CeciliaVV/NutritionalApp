@@ -11,8 +11,7 @@ class ListFoodScreen extends StatelessWidget {
 
   const ListFoodScreen(this.foods, {Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
+  getListFoodScreen(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -21,7 +20,9 @@ class ListFoodScreen extends StatelessWidget {
         leading: IconButton(
             alignment: AlignmentDirectional.bottomEnd,
             icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () {}),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
       ),
       body: ListView.separated(
         itemBuilder: (context, index) => ListTile(
@@ -50,5 +51,42 @@ class ListFoodScreen extends StatelessWidget {
         itemCount: foods.length,
       ),
     );
+  }
+
+  getLoadingWidget() {
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  getErrorWidget(message) {
+    return Center(
+        child: Text(
+      message,
+      style: const TextStyle(color: Colors.green, fontSize: 20),
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.watch<FoodCubit>();
+
+    return BlocBuilder<FoodCubit, FoodState>(builder: (context, state) {
+      return BlocListener(
+        listener: (context, state) {
+          if (state is FoodSearchedState && state.foods.isNotEmpty) {
+            getListFoodScreen(context);
+          }
+        },
+        bloc: cubit,
+        child: Scaffold(
+            backgroundColor: Colors.white,
+            body: cubit.state is FoodSearchingState
+                ? getLoadingWidget()
+                : cubit.state is ErrorState
+                    ? getErrorWidget("No results found. Try agin.")
+                    : cubit.state is NoFoodSearchedState
+                        ? Container()
+                        : Container()),
+      );
+    });
   }
 }

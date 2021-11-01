@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nutritionalapp/bloc/food_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nutritionalapp/repository/api.dart';
 import 'package:nutritionalapp/ui.dart/list_food_screen.dart';
 
 class FoodSearch extends StatelessWidget {
